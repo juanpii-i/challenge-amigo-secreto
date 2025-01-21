@@ -2,93 +2,80 @@ let numeroDeAmigos = 0;
 let numeroMaximoAmigos = 10;
 let numeroMinimoAmigos = 4;
 let listaDeAmigosSecretos = [];
-let listaParejasAmigosSecretos =[];
-let numeroMaximoDeSorteos = 0;
+let listaParejasAmigosSecretos = [];
 
+function agregarAmigos() {
+    let amigoAgregado = (document.getElementById('amigo').value);
 
-function agregarAmigos() 
+    if (amigoAgregado.trim() === '') {
+        alert('Por favor, inserte un nombre.');
+    } else {
+        if (validarNombres(amigoAgregado)) {
+            listaDeAmigosSecretos.push(amigoAgregado);
+            numeroDeAmigos++;
+            limpiarCajaDeTexto();
+            console.log(numeroDeAmigos);
+            console.log(amigoAgregado);
+            console.log(listaDeAmigosSecretos);
+        }
+    }
+}
 
-            {
-                let amigoAgregado = (document.getElementById('amigo').value);
+function validarNombres(amigoAgregado) {
+    if (listaDeAmigosSecretos.includes(amigoAgregado)) {
+        alert('El nombre introducido ya existe, ingrese un nuevo');
+        return false; // Indica que el nombre no es válido
+    }
+    return true; // Indica que el nombre es válido
+}
 
-                if (amigoAgregado.trim() === '') 
-                {
-                alert('Por favor, inserte un nombre.');
-                }
-                else 
-                {
-                
-                   if (validarNombres(amigoAgregado))
-                    {
-                    listaDeAmigosSecretos.push(amigoAgregado);
-                    
-                    numeroDeAmigos ++;
+function limpiarCajaDeTexto() {
+    document.getElementById('amigo').value = "";
+}
 
-                    limpiarCajaDeTexto();
+function validaNumeroAmigosLista() {
+    if (listaDeAmigosSecretos.length < numeroMinimoAmigos) {
+        alert(`El número de amigos debe ser mayor a ${numeroMinimoAmigos}`);
+        return false;
+    } else if (listaDeAmigosSecretos.length > numeroMaximoAmigos) {
+        alert(`El número de amigos debe ser menor a ${numeroMaximoAmigos}`);
+        return false;
+    }
+    return true;
+}
 
-                    console.log(numeroDeAmigos)    
-                    console.log(amigoAgregado)
-                    console.log(listaDeAmigosSecretos)
-                    
-                    return;
-                    }
-                }
-            }
+function asignarParejasAmigoSecreto() {
+    let amigosRestantes = [...listaDeAmigosSecretos]; // Copia de la lista de amigos
+    listaParejasAmigosSecretos = []; // Limpiar lista de parejas antes de un nuevo sorteo
 
-function validarNombres(amigoAgregado) 
-            {
-                if (listaDeAmigosSecretos.includes(amigoAgregado))
-                    {
-                    
-                    alert('El nombre introducido ya existe, ingrese un nuevo');
-                    return false; // Indica que el nombre no es válido
-                    
-                    }
+    for (let i = 0; i < listaDeAmigosSecretos.length; i++) {
+        let amigo1 = listaDeAmigosSecretos[i];
+        let amigo2Index;
 
-                return true; // Indica que el nombre es válido
-            }
+        // Asegurarse de que el amigo no sea asignado a sí mismo
+        do {
+            amigo2Index = Math.floor(Math.random() * amigosRestantes.length);
+        } while (amigosRestantes[amigo2Index] === amigo1);
 
-function limpiarCajaDeTexto ()
-            {
-             document.getElementById('amigo').value = "";
-            }
+        let amigo2 = amigosRestantes[amigo2Index];
+        listaParejasAmigosSecretos.push(`${amigo1} es asignado a ${amigo2}`);
 
-function validaNumeroAmigosLista () 
-            {
-                if (listaDeAmigosSecretos.length < numeroMinimoAmigos) 
-                    {
-                    alert(`El número de amigos debe ser mayor a ${numeroMinimoAmigos}`);
-                    return false;
-                    }
+        // Eliminar el amigo asignado para evitar duplicados
+        amigosRestantes.splice(amigo2Index, 1);
+    }
 
-                else if (listaDeAmigosSecretos.length > numeroMaximoAmigos)
-                    {
-                    alert(`El número de amigos debe ser menor a ${numeroMaximoAmigos}`);
-                    return false;
-                    }
-                
-                return true;
-            }
+    console.log("Lista de Parejas de Amigos Secretos:", listaParejasAmigosSecretos);
+}
 
-function generarAmigoSecreto ()
-            {
-                let numeroDeAmigoSorteado = (Math.floor(Math.random () * numeroDeAmigos) + 1);
-                console.log (numeroDeAmigoSorteado)
-                return numeroDeAmigoSorteado;
-            }
+function sorteoDeAmigosSecretos() {
+    if (validaNumeroAmigosLista()) {
+        asignarParejasAmigoSecreto();
+        asignarTexto('textoPantalla', "Lista de Parejas de Amigos Secretos:\n" + listaParejasAmigosSecretos.join('\n'));
+        alert("El sorteo se ha realizado con éxito.");
+    }
+}
 
-function asignarParejasAmigoSecreto (numeroDeAmigoSorteado)
-            {
-                let amigo1 = generarAmigoSecreto ();
-                let indiceAmigo1 =( listaDeAmigosSecretos.indexOf(amigo1));
-                
-                let amigo2 = generarAmigoSecreto();
-                let IndiceAmigo2 = (listaDeAmigosSecretos.indexOf(amigo2));
-
-                While (amigo1 === amigo2)
-                    {
-                    amigo2 = generarAmigoSecreto();
-                    }
-              
-
-            }
+function asignarTexto(elemento, texto) {
+    let elementoHTML = document.getElementById(elemento);
+    elementoHTML.innerHTML = texto;
+}
